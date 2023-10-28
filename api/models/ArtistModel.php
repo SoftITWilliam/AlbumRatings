@@ -1,13 +1,16 @@
 <?php
 class ArtistModel extends Database {
 
-    public static function get_artist() {
-        $result = new Result();
-        echo json_encode($result);
+    public function get_artist() : ObjectResult 
+    {
+        $result = new ObjectResult();
+        return $result;
     }
 
-    public static function get_all_artists() {
-
+    public static function get_all_artists() : DataResult 
+    {
+        $result = new DataResult();
+        return $result;
     }
 }
 

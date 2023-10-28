@@ -23,16 +23,18 @@
  */
 
 class API {
-    static async #request(moduleName, methodName) {
+    static async #request(moduleName, methodName, params = {}) {
         if(!moduleName || !methodName) {
             return null;
         }
+        console.log(params);
         return new Promise((resolve) => {
             $.ajax({
                 url: `${API_PATH}/${moduleName}/${methodName}`,
-                
+                data: params,
             })
             .then(result => {
+                console.log(result);
                 try {
                     resolve(JSON.parse(result));
                 }
@@ -40,11 +42,21 @@ class API {
                     resolve(result);
                 }
             })
-            .catch(result => resolve(result));
+            .catch(result => {
+                console.log(result);
+                try {
+                    resolve(JSON.parse(result));
+                }
+                catch {
+                    resolve(result);
+                }
+            })
         })
     }
 
     static Countries = {
+        /** @returns {{success: boolean, info: string, object: object}} */
+        get: (country_id) => this.#request("country", "get", { country_id }),
         /** @returns {{success: boolean, info: string, data: object[]}} */
         getList: () => this.#request("country", "get_list"),
     }

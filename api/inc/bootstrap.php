@@ -12,4 +12,5 @@ require_once PROJECT_ROOT_PATH . "/class/results/DataResult.php";
 require_once PROJECT_ROOT_PATH . "/class/results/ObjectResult.php";
 
 require_once PROJECT_ROOT_PATH . "/models/Database.php";
+require_once PROJECT_ROOT_PATH . "/common/helper/helper.php";
 ?>

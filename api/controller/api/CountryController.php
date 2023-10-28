@@ -3,30 +3,43 @@ require PROJECT_ROOT_PATH . "/models/CountryModel.php";
 class CountryController extends BaseController
 {
     /**
-    * "/country/get_list" Endpoint - Get list of all countries
-    */
-    public function get_list_action() : void
+     * "/country/get" Endpoint - Get country from id
+     */
+    public function get_action() : void 
     {
-        $error_msg = false;
+        $req_method = $_SERVER["REQUEST_METHOD"];
+        if (strtoupper($req_method) != 'GET') $this->output_error_422("Method not supported");
+
+        $params = $this->get_query_string_params();
+        $this->require_params("country_id");
+
+        $id = $params["country_id"];
 
         try {
             $model = new CountryModel();
-            $result = $model->get_all_countries();
-        } catch (Error $e) {
-            $error_msg = 'Something went wrong! (' . $e->getMessage() . ')';
-        }
-
-        // send output
-        if (!$error_msg) {
-            $this->sendOutput(json_encode($result),
+            $result = $model->get_country($id);
+            $this->send_output(json_encode($result),
                 array('Content-Type: application/json', HEADER_OK)
             );
-        } else {
-            $r = new DataResult();
-            $r->info = $error_msg;
-            $this->sendOutput(json_encode($r), 
-                array('Content-Type: application/json', HEADER_ERROR_500)
+        } catch (Error $e) {
+            $error_msg = 'Something went wrong! (' . $e->getMessage() . ')';
+            $this->output_error_500($error_msg);
+        }
+    }
+    /**
+     * "/country/get_list" Endpoint - Get list of all countries
+     */
+    public function get_list_action() : void
+    {
+        try {
+            $model = new CountryModel();
+            $result = $model->get_all_countries();
+            $this->send_output(json_encode($result),
+                array('Content-Type: application/json', HEADER_OK)
             );
+        } catch (Error $e) {
+            $error_msg = 'Something went wrong! (' . $e->getMessage() . ')';
+            $this->output_error_500($error_msg);
         }
     }
 }

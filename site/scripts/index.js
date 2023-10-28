@@ -7,4 +7,6 @@ API.Countries.getList().then(({ success, info, data }) => {
     })
 });
 
-API.Countries.getList()
+API.Countries.get(1).then(({ success, info, object }) => {
+    $("#temporary").prepend($("<h1>").text(object.name));
+});

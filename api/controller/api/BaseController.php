@@ -2,43 +2,44 @@
 class BaseController
 {
     /**
-    * __call magic method.
-    */
+     * __call magic method.
+     */
     public function __call($name, $arguments)
     {
-        $this->sendOutput('', array('HTTP/1.1 404 Not Found'));
+        $this->send_output('', array('HTTP/1.1 404 Not Found'));
     }
 
     /**
-    * Get URI elements.
-    *
-    * @return array
-    */
-    protected function getUriSegments()
-    {
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $uri = explode( '/', $uri );
-        return $uri;
-    }
-
-    /**
-    * Get querystring params.
-    *
-    * @return array
-    */
-    protected function getQueryStringParams()
+     * Get querystring params.
+     */
+    protected function get_query_string_params() : array
     {
         parse_str($_SERVER['QUERY_STRING'], $query);
         return $query;
     }
 
     /**
-    * Send API output.
-    *
-    * @param mixed $data
-    * @param string $httpHeader
-    */
-    protected function sendOutput($data, $httpHeaders=array())
+     * Throw an error if any of the required params are unset
+     */
+    protected function require_params(string ...$required_params) : void 
+    {
+        $query_params = $this->get_query_string_params();
+        $missing_params = [];
+        foreach($query_params as $key => $value) {
+            if(array_search($key, $required_params) === false) {
+                array_push($missing_params, $key);
+            }
+        }
+        if (count($missing_params) > 0) {
+            throw new Exception('Missing required params: ' . implode(", ", $missing_params));
+        }
+    }
+
+    /**
+     * Send API output.
+     * (EXITS SCRIPT)
+     */
+    protected function send_output($data, $httpHeaders=array())
     {
         header_remove('Set-Cookie');
         if (is_array($httpHeaders) && count($httpHeaders)) {
@@ -48,5 +49,22 @@ class BaseController
         }
         echo $data;
         exit;
+    }
+
+    /**
+     * Send API error 500 (WILL EXIT SCRIPT)
+     */
+    protected function output_error_500(string $info) {
+        $r = new DataResult();
+        $r->info = $info;
+        $this->send_output(json_encode($r), array(CONTENT_TYPE_JSON, HEADER_ERROR_500));
+    }
+    /**
+     * Send API error 422 (WILL EXIT SCRIPT)
+     */
+    protected function output_error_422(string $info) {
+        $r = new DataResult();
+        $r->info = $info;
+        $this->send_output(json_encode($r), array(CONTENT_TYPE_JSON, HEADER_ERROR_422));
     }
 }
