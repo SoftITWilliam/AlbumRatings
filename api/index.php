@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . "/inc/bootstrap.php";
 require __DIR__ . "/controller/api/CountryController.php";
+require __DIR__ . "/controller/api/ArtistController.php";
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', $uri);
@@ -18,9 +19,11 @@ try {
     $controller = null;
 
     switch($uri[1]) {
+        case "artist":
+            $controller = new ArtistController(); break;
+            
         case "country": 
-            $controller = new CountryController(); 
-            break;
+            $controller = new CountryController(); break;
     }
 
     if($controller === null) {

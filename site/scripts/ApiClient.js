@@ -58,6 +58,27 @@ class API {
         })
     }
 
+    static Artists = {
+        /** 
+         * @param {number} id Artist ID
+         * @returns {{success: boolean, info: string, object: object}} 
+         * */
+        get: (id) => this.#request("artist", "get", { id }),
+        /** 
+         * @returns {{success: boolean, info: string, data: object[]}} 
+         * */
+        getList: () => this.#request("artist", "get_list"),
+        /** 
+         * @param {object} params
+         * @param {number} [params.id] Artist ID (Insert new artist if unset)
+         * @param {string} params.name
+         * @param {string} params.description
+         * @param {string} params.years_active
+         * @returns {{success: boolean, info: string}} 
+         * */
+        save: (params) => this.#request("artist", "save", params),
+    }
+
     static Countries = {
         /** 
          * @param {number} id Country ID
