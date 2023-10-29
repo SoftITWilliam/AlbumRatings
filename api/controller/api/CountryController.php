@@ -7,25 +7,25 @@ class CountryController extends BaseController
      */
     public function get_action() : void 
     {
-        $req_method = $_SERVER["REQUEST_METHOD"];
-        if (strtoupper($req_method) != 'GET') $this->output_error_422("Method not supported");
+        $this->require_request_method("GET");
+        $this->require_params("id");
 
         $params = $this->get_query_string_params();
-        $this->require_params("country_id");
-
-        $id = $params["country_id"];
+        $id = $params["id"];
 
         try {
             $model = new CountryModel();
             $result = $model->get_country($id);
             $this->send_output(json_encode($result),
-                array('Content-Type: application/json', HEADER_OK)
+                array(CONTENT_TYPE_JSON, HEADER_OK)
             );
         } catch (Error $e) {
-            $error_msg = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($error_msg);
+            $result = new ObjectResult();
+            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
+            $this->output_error_500($result);
         }
     }
+    
     /**
      * "/country/get_list" Endpoint - Get list of all countries
      */
@@ -35,11 +35,34 @@ class CountryController extends BaseController
             $model = new CountryModel();
             $result = $model->get_all_countries();
             $this->send_output(json_encode($result),
-                array('Content-Type: application/json', HEADER_OK)
+                array(CONTENT_TYPE_JSON, HEADER_OK)
             );
         } catch (Error $e) {
-            $error_msg = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($error_msg);
+            $result = new DataResult();
+            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
+            $this->output_error_500($result);
+        }
+    }
+
+    /**
+     * "/country/save" Endpoint - Save country
+     */
+    public function save_action() : void 
+    {
+        $this->require_request_method("GET");
+
+        $params = $this->get_query_string_params();
+
+        try {
+            $model = new CountryModel();
+            $result = $model->save_country($params);
+            $this->send_output(json_encode($result),
+                array(CONTENT_TYPE_JSON, HEADER_OK)
+            );
+        } catch (Error $e) {
+            $result = new Result();
+            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
+            $this->output_error_500($result);
         }
     }
 }

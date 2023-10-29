@@ -18,7 +18,7 @@ function get_property_with_attr(object|null $object, string $attr_name) : ?Refle
     $properties = $reflector->getProperties();
 
     return array_find($properties, fn($prop) => (
-        array_find($prop->getAttributes(), fn($attr) => ($attr->getName() == $attr_name))
+        count($prop->getAttributes($attr_name)) > 0
     ));
 }
 

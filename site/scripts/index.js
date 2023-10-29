@@ -1,12 +1,17 @@
 
-const API_PATH = "http://localhost:8080/webbutveckling/AlbumRatings/api/index.php";
-
-API.Countries.getList().then(({ success, info, data }) => {
-    data.forEach(country => {
-        $("#temporary").append($("<p>").text(country.name));
-    })
+API.Countries.getList().then(result => {
+    if(result.success) {
+        result.data.forEach(country => {
+            $("#temporary").append($("<p>").text(country.name));
+        })
+    }
 });
 
-API.Countries.get(1).then(({ success, info, object }) => {
-    $("#temporary").prepend($("<h1>").text(object.name));
+API.Countries.get(1).then(result => {
+    if(result.success) {
+        $("#temporary").prepend($("<h1>").text(result.object.name));
+    }
 });
+
+let params = { id: 1, name: "Afghanistan" };
+API.Countries.save(params);

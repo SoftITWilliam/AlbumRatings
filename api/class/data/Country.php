@@ -2,9 +2,9 @@
 require_once(PROJECT_ROOT_PATH . "/class/data/DataBaseClass.php");
 
 class Country extends DataBaseClass {
-    #[DataColumn("id"), PrimaryKey]
+    #[DataColumn, PrimaryKey]
     public $id;
-    #[DataColumn("name")]
+    #[DataColumn]
     public ?string $name;
 }
 ?>

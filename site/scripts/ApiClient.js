@@ -23,42 +23,58 @@
  */
 
 class API {
-    static async #request(moduleName, methodName, params = {}) {
-        if(!moduleName || !methodName) {
-            return null;
+
+    static Config = {
+        PATH: "http://localhost:8080/webbutveckling/AlbumRatings/api/index.php",
+        LOG_RESULTS: true,
+    }
+    /**
+     * @param {string} moduleName Name of module (ex. Country, Album, Artist)
+     * @param {string} methodName Name of method (ex. get, get_list, save)
+     * @param {string} data API method parameters
+     */
+    static async #request(moduleName, methodName, data = {}) {
+
+        const url = [this.Config.PATH, moduleName, methodName].filter(e => e).join("/");
+        const logPath = url.replace(this.Config.PATH, "api");
+
+        var parseResult = (r) => {
+            return (typeof r == "string" ? JSON.parse(r) :
+                r.hasOwnProperty("responseJSON") ? r.responseJSON : r);
         }
-        console.log(params);
+
         return new Promise((resolve) => {
-            $.ajax({
-                url: `${API_PATH}/${moduleName}/${methodName}`,
-                data: params,
+            $.ajax({ url, data })
+            .then(r => {
+                const result = parseResult(r);
+                if(this.Config.LOG_RESULTS) console.log(logPath, result);
+                resolve(result);
             })
-            .then(result => {
-                console.log(result);
-                try {
-                    resolve(JSON.parse(result));
-                }
-                catch {
-                    resolve(result);
-                }
-            })
-            .catch(result => {
-                console.log(result);
-                try {
-                    resolve(JSON.parse(result));
-                }
-                catch {
-                    resolve(result);
-                }
+            .catch(r => {
+                const result = parseResult(r);
+                if(this.Config.LOG_RESULTS) console.warn(logPath, result);
+                resolve(result);
             })
         })
     }
 
     static Countries = {
-        /** @returns {{success: boolean, info: string, object: object}} */
-        get: (country_id) => this.#request("country", "get", { country_id }),
-        /** @returns {{success: boolean, info: string, data: object[]}} */
+        /** 
+         * @param {number} id Country ID
+         * @returns {{success: boolean, info: string, object: object}} 
+         * */
+        get: (id) => this.#request("country", "get", { id }),
+        /** 
+         * @returns {{success: boolean, info: string, data: object[]}} 
+         * */
         getList: () => this.#request("country", "get_list"),
+        /** 
+         * @param {object} params
+         * @param {number} [params.id] Country ID (Insert new country if unset)
+         * @param {string} params.name Country Name
+         * @returns {{success: boolean, info: string}} 
+         * */
+        save: (params) => this.#request("country", "save", params),
     }
 }
 
