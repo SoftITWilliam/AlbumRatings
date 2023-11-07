@@ -1,0 +1,34 @@
+
+:root {
+    --black: #000;
+    --blackish: #0F070B;
+    --dark-purple: #291528;
+    --black-olive: #3A3E3B;
+    --ghost-white: #F3E8EE;
+    --mountbatten-pink: #9E829C;
+    --pink-lavender: #FFC8FB;
+    --pale-pink: #FFE4F3;
+    --amaranth-pink: #FF92C2;
+}
+
+body {
+    background-color: var(--dark-purple);
+}
+
+.card {
+    border-color: var(--blackish);
+    border-radius: 1rem;
+
+    & .card-header {
+        border-radius: 1rem 1rem 0 0;
+        background-color: var(--mountbatten-pink);
+
+        & .nav-link:not(.active) {
+            color: var(--ghost-white);
+        }
+        
+        & .nav-link:not(.active):hover {
+            border-color: var(--ghost-white);
+        }
+    }
+}
