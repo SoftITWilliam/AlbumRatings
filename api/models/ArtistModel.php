@@ -1,4 +1,6 @@
 <?php
+
+#[TableName("artist")]
 class ArtistModel extends Model {
     #[DataColumn, PrimaryKey]
     public $id;
@@ -8,12 +10,12 @@ class ArtistModel extends Model {
     public ?string $description;
     #[DataColumn]
     public ?string $years_active;
-    
+
     public function get_artist($artist_id) : ObjectResult 
     {
         $result = new ObjectResult();
         try {
-            $sql = "SELECT * FROM artist WHERE id = ?";
+            $sql = QueryGenerator::generate_select_query($this);
             $data = $this->select($sql, "s", [$artist_id]);
             if($data != null && count($data) > 0) {
                 $this->apply_params($data[0]);
@@ -56,8 +58,8 @@ class ArtistModel extends Model {
         $this->apply_params($params);
 
         try {
-            $this->save("artist", $this);
-            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added") . " Country";
+            $this->save();
+            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added");
             $result->success = true;
         }
         catch(Exception $e) {

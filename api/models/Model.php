@@ -16,6 +16,13 @@ class Model {
         }
     }
 
+    public function get_table_name() : string 
+    {
+        $attr = get_attr($this, TableName::class);
+        $args = $attr->getArguments();
+        return count($args) > 0 ? $args[0] : "";
+    }
+
     public function apply_params(array|object $params) 
     {
         $reflection = new ReflectionClass(get_class($this));
@@ -146,38 +153,38 @@ class Model {
         }	
     }
 
-    protected function save(string $table_name, Model $object): mysqli_stmt {
+    protected function save(): mysqli_stmt {
 
-        $primary_key = $object->get_primary_key_value();
+        $primary_key = $this->get_primary_key_value();
 
         if(!$primary_key) {
-            return $this->insert($table_name, $object);
+            return $this->insert();
         }
         else {
-            return $this->update($table_name, $object);
+            return $this->update();
         }
     }
 
-    protected function insert(string $table_name, Model $object): mysqli_stmt 
+    protected function insert(): mysqli_stmt 
     {
-        $sql = QueryGenerator::generate_insert_query($table_name, $object);
+        $sql = QueryGenerator::generate_insert_query($this);
         echo $sql;
 
         // Construct an array with values to bind
-        $insert_values = $object->get_update_values();
+        $insert_values = $this->get_update_values();
         $types = str_repeat('s', count($insert_values));
 
         $stmt = $this->execute_statement($sql, $types, $insert_values);
         return $stmt;
     }
 
-    protected function update(string $table_name, Model $object): mysqli_stmt 
+    protected function update(): mysqli_stmt 
     {
-        $sql = QueryGenerator::generate_update_query($table_name, $object);
+        $sql = QueryGenerator::generate_update_query($this);
 
         // Construct an array with values to bind
-        $update_values = $object->get_update_values();
-        $update_values[] = $object->get_primary_key_value();
+        $update_values = $this->get_update_values();
+        $update_values[] = $this->get_primary_key_value();
 
         $types = str_repeat('s', count($update_values));
 

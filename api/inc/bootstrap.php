@@ -7,7 +7,6 @@ require_once PROJECT_ROOT_PATH . "/inc/const.php";
 // include base controller
 require_once PROJECT_ROOT_PATH . "/controller/api/BaseController.php";
 // include helper
-require_once PROJECT_ROOT_PATH . "/common/DbConnection.php";
 require_once PROJECT_ROOT_PATH . "/common/helper/helper.php";
 // include result classes
 require_once PROJECT_ROOT_PATH . "/class/results/Result.php";

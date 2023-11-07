@@ -1,5 +1,6 @@
 <?php
 
+#[TableName("country")]
 class CountryModel extends Model {
 
     #[DataColumn, PrimaryKey]
@@ -11,7 +12,7 @@ class CountryModel extends Model {
     {
         $result = new ObjectResult();
         try {
-            $sql = "SELECT * FROM country WHERE id = ?";
+            $sql = QueryGenerator::generate_select_query($this);
             $data = $this->select($sql, "s", [$country_id]);
             if($data != null && count($data) > 0) {
                 $this->apply_params($data[0]);
@@ -33,6 +34,7 @@ class CountryModel extends Model {
         try {
             $sql = "SELECT * FROM country";
             $data = $this->select($sql);
+            $result->info = $sql;
             $result->data = $data;
             $result->success = true;
         }
@@ -54,8 +56,8 @@ class CountryModel extends Model {
         $this->apply_params($params);
 
         try {
-            $this->save("country", $this);
-            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added") . " Country";
+            $this->save();
+            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added");
             $result->success = true;
         }
         catch(Exception $e) {

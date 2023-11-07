@@ -22,6 +22,12 @@ function get_property_with_attr(object|null $object, string $attr_name) : ?Refle
     ));
 }
 
+function get_attr(object|null $object, string $attr_name) : ?ReflectionAttribute {
+    $reflector = new ReflectionClass(get_class($object));
+    $attr = $reflector->getAttributes($attr_name);
+    return count($attr) > 0? $attr[0] : null;
+}
+
 /**
  * Executes callback function for each item in array.
  * Returns the first item that satisfies the callback condition.
