@@ -1,15 +1,21 @@
 <?php
-require_once(PROJECT_ROOT_PATH . "/class/data/Country.php");
 
-class CountryModel extends Database {
-    public function get_country($country_id) 
+class CountryModel extends Model {
+
+    #[DataColumn, PrimaryKey]
+    public $id;
+    #[DataColumn]
+    public ?string $name;
+
+    public function get_country($country_id) : ObjectResult
     {
         $result = new ObjectResult();
         try {
             $sql = "SELECT * FROM country WHERE id = ?";
             $data = $this->select($sql, "s", [$country_id]);
             if($data != null && count($data) > 0) {
-                $result->object = new Country($data[0]);
+                $this->apply_params($data[0]);
+                $result->object = $this;
                 $result->success = true;
             }
             else throw new Exception("No data found");
@@ -21,7 +27,7 @@ class CountryModel extends Database {
         return $result;
     }
     
-    public function get_all_countries() 
+    public function get_all_countries() : DataResult
     {
         $result = new DataResult();
         try {
@@ -37,21 +43,19 @@ class CountryModel extends Database {
         return $result;
     }
 
-    public function save_country(array $params) 
+    public function save_country(array $params) : Result
     {
         $result = new Result();
 
-        $country = new Country();
-        $primary_field = $country->get_primary_key_field();
+        $primary_field = $this->get_primary_key_field();
         if(isset($params[$primary_field])) {
-            $country->apply_params($this->get_country($params[$primary_field])->object);
+            $this->apply_params($this->get_country($params[$primary_field])->object);
         }
-        $country->apply_params($params);
+        $this->apply_params($params);
 
         try {
-            $this->save("country", $country);
-            $result->info = $country->get_primary_key_value() ? 
-                "Successfully edited country" : "Successfully added country";
+            $this->save("country", $this);
+            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added") . " Country";
             $result->success = true;
         }
         catch(Exception $e) {

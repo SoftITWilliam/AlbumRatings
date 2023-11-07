@@ -16,9 +16,7 @@ class CountryController extends BaseController
         try {
             $model = new CountryModel();
             $result = $model->get_country($id);
-            $this->send_output(json_encode($result),
-                array(CONTENT_TYPE_JSON, HEADER_OK)
-            );
+            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
         } catch (Error $e) {
             $result = new ObjectResult();
             $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
@@ -31,14 +29,12 @@ class CountryController extends BaseController
      */
     public function get_list_action() : void
     {
+        $result = new DataResult();
         try {
             $model = new CountryModel();
             $result = $model->get_all_countries();
-            $this->send_output(json_encode($result),
-                array(CONTENT_TYPE_JSON, HEADER_OK)
-            );
+            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
         } catch (Error $e) {
-            $result = new DataResult();
             $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
             $this->output_error_500($result);
         }

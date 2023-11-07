@@ -39,8 +39,13 @@ class API {
         const logPath = url.replace(this.Config.PATH, "api");
 
         var parseResult = (r) => {
-            return (typeof r == "string" ? JSON.parse(r) :
-                r.hasOwnProperty("responseJSON") ? r.responseJSON : r);
+            try {
+                return (typeof r == "string" ? JSON.parse(r) :
+                    r.hasOwnProperty("responseJSON") ? r.responseJSON : r);
+            }
+            catch {
+                return r;
+            }
         }
 
         return new Promise((resolve) => {
@@ -53,6 +58,7 @@ class API {
             .catch(r => {
                 const result = parseResult(r);
                 if(this.Config.LOG_RESULTS) console.warn(logPath, result);
+                alert(result.responseText || result.info || "Oopsie");
                 resolve(result);
             })
         })

@@ -17,9 +17,7 @@ class ArtistController extends BaseController
         try {
             $model = new ArtistModel();
             $result = $model->get_artist($id);
-            $this->send_output(json_encode($result),
-                array(CONTENT_TYPE_JSON, HEADER_OK)
-            );
+            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
         } catch (Error $e) {
             $result = new ObjectResult();
             $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
@@ -36,9 +34,7 @@ class ArtistController extends BaseController
         try {
             $model = new ArtistModel();
             $result = $model->get_all_artists();
-            $this->send_output(json_encode($result),
-                array(CONTENT_TYPE_JSON, HEADER_OK)
-            );
+            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
         } catch (Error $e) {
             $result = new DataResult();
             $result->info = 'Something went wrong! (' . $e->getMessage() . ')';

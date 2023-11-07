@@ -1,7 +1,14 @@
 <?php
-require_once(PROJECT_ROOT_PATH . "/class/data/Artist.php");
-class ArtistModel extends Database {
-
+class ArtistModel extends Model {
+    #[DataColumn, PrimaryKey]
+    public $id;
+    #[DataColumn]
+    public ?string $name;
+    #[DataColumn]
+    public ?string $description;
+    #[DataColumn]
+    public ?string $years_active;
+    
     public function get_artist($artist_id) : ObjectResult 
     {
         $result = new ObjectResult();
@@ -9,7 +16,8 @@ class ArtistModel extends Database {
             $sql = "SELECT * FROM artist WHERE id = ?";
             $data = $this->select($sql, "s", [$artist_id]);
             if($data != null && count($data) > 0) {
-                $result->object = new Artist($data[0]);
+                $this->apply_params($data[0]);
+                $result->object = $this;
                 $result->success = true;
             }
             else throw new Exception("No data found");
@@ -38,21 +46,18 @@ class ArtistModel extends Database {
         return $result;
     }
 
-    public function save_artist(array $params) 
+    public function save_artist(array $params) : Result
     {
         $result = new Result();
-
-        $artist = new Artist();
-        $primary_field = $artist->get_primary_key_field();
+        $primary_field = $this->get_primary_key_field();
         if(isset($params[$primary_field])) {
-            $artist->apply_params($this->get_artist($params[$primary_field])->object);
+            $this->apply_params($this->get_artist($params[$primary_field])->object);
         }
-        $artist->apply_params($params);
+        $this->apply_params($params);
 
         try {
-            $this->save("artist", $artist);
-            $result->info = $artist->get_primary_key_value() ? 
-                "Successfully edited artist" : "Successfully added artist";
+            $this->save("artist", $this);
+            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added") . " Country";
             $result->success = true;
         }
         catch(Exception $e) {
