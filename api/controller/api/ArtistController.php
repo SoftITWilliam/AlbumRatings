@@ -16,7 +16,7 @@ class ArtistController extends BaseController
 
         try {
             $model = new ArtistModel();
-            $result = $model->get_artist($id);
+            $result = $model->get($id);
             $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
         } catch (Error $e) {
             $result = new ObjectResult();
@@ -33,7 +33,7 @@ class ArtistController extends BaseController
     {
         try {
             $model = new ArtistModel();
-            $result = $model->get_all_artists();
+            $result = $model->get_all();
             $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
         } catch (Error $e) {
             $result = new DataResult();
@@ -53,7 +53,7 @@ class ArtistController extends BaseController
 
         try {
             $model = new ArtistModel();
-            $result = $model->save_artist($params);
+            $result = $model->save($params);
             $this->send_output(json_encode($result),
                 array(CONTENT_TYPE_JSON, HEADER_OK)
             );

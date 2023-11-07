@@ -38,4 +38,29 @@ function array_find(array $array, Closure $callback_fn) {
     }
     return null;
 }
+
+function apply(object $target, array|object $params) {
+    foreach ($params as $key => $value) {
+        try {
+            $target->{$key} = $value;
+        }
+        catch(Exception $e) { }
+    }
+}
+
+function apply_where_attribute(object $target, array|object $params, string $attribute_name) {
+    $reflection = new ReflectionClass(get_class($target));
+
+    foreach ($params as $key => $value) {
+
+        try {
+            $prop = $reflection->getProperty($key);
+            $attributes = $prop->getAttributes($attribute_name);
+            if(count($attributes) > 0) {
+                $target->{$key} = $value;
+            }
+        }
+        catch(Exception $e) { }
+    }
+}
 ?>

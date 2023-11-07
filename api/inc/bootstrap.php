@@ -14,5 +14,6 @@ require_once PROJECT_ROOT_PATH . "/class/results/DataResult.php";
 require_once PROJECT_ROOT_PATH . "/class/results/ObjectResult.php";
 // include some other stuff
 require_once PROJECT_ROOT_PATH . "/models/Model.php";
+require_once PROJECT_ROOT_PATH . "/models/IStandardModel.php";
 require_once PROJECT_ROOT_PATH . "/attributes/DataColumn.php";
 ?>

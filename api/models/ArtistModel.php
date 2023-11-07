@@ -1,7 +1,8 @@
 <?php
+require_once(PROJECT_ROOT_PATH . "/models/ModelUtil.php");
 
 #[TableName("artist")]
-class ArtistModel extends Model {
+class ArtistModel extends Model implements IStandardModel {
     #[DataColumn, PrimaryKey]
     public $id;
     #[DataColumn]
@@ -11,64 +12,20 @@ class ArtistModel extends Model {
     #[DataColumn]
     public ?string $years_active;
 
-    public function get_artist($artist_id) : ObjectResult 
+    public function get($artist_id) : ObjectResult 
     {
-        $result = new ObjectResult();
-        try {
-            $sql = QueryGenerator::generate_select_query($this);
-            $data = $this->select($sql, "s", [$artist_id]);
-            if($data != null && count($data) > 0) {
-                $this->apply_params($data[0]);
-                $result->object = $this;
-                $result->success = true;
-            }
-            else throw new Exception("No data found");
-        }
-        catch(Exception $e) {
-            $result->success = false;
-            $result->info = $e->getMessage();
-        }
-        return $result;
+        return $this->std_get($artist_id);
     }
 
-    public function get_all_artists() : DataResult 
+    public function get_all() : DataResult 
     {
-        $result = new DataResult();
-        try {
-            $sql = "SELECT * FROM artist";
-            $data = $this->select($sql);
-            $result->info = $sql;
-            $result->data = $data;
-            $result->success = true;
-        }
-        catch(Exception $e) {
-            $result->success = false;
-            $result->info = $e->getMessage();
-        }
-        return $result;
+        return $this->std_get_all();
     }
 
-    public function save_artist(array $params) : Result
+    public function save(array $params) : Result
     {
-        $result = new Result();
-        $primary_field = $this->get_primary_key_field();
-        if(isset($params[$primary_field])) {
-            $this->apply_params($this->get_artist($params[$primary_field])->object);
-        }
-        $this->apply_params($params);
-
-        try {
-            $this->save();
-            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added");
-            $result->success = true;
-        }
-        catch(Exception $e) {
-            $result->success = false;
-            $result->info = $e->getMessage();
-        }
-        return $result;
+        update_model($this, $params, $this->get_primary_key_field());
+        return $this->std_save();
     }
 }
-
-
 ?>

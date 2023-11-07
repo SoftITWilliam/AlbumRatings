@@ -1,70 +1,28 @@
 <?php
+require_once(PROJECT_ROOT_PATH . "/models/ModelUtil.php");
 
 #[TableName("country")]
-class CountryModel extends Model {
+class CountryModel extends Model implements IStandardModel {
 
     #[DataColumn, PrimaryKey]
     public $id;
     #[DataColumn]
     public ?string $name;
 
-    public function get_country($country_id) : ObjectResult
+    public function get($country_id) : ObjectResult
     {
-        $result = new ObjectResult();
-        try {
-            $sql = QueryGenerator::generate_select_query($this);
-            $data = $this->select($sql, "s", [$country_id]);
-            if($data != null && count($data) > 0) {
-                $this->apply_params($data[0]);
-                $result->object = $this;
-                $result->success = true;
-            }
-            else throw new Exception("No data found");
-        }
-        catch(Exception $e) {
-            $result->success = false;
-            $result->info = $e->getMessage();
-        }
-        return $result;
-    }
-    
-    public function get_all_countries() : DataResult
-    {
-        $result = new DataResult();
-        try {
-            $sql = "SELECT * FROM country";
-            $data = $this->select($sql);
-            $result->info = $sql;
-            $result->data = $data;
-            $result->success = true;
-        }
-        catch(Exception $e) {
-            $result->success = false;
-            $result->info = $e->getMessage();
-        }
-        return $result;
+        return $this->std_get($country_id);
     }
 
-    public function save_country(array $params) : Result
+    public function get_all() : DataResult
     {
-        $result = new Result();
+        return $this->std_get_all();
+    }
 
-        $primary_field = $this->get_primary_key_field();
-        if(isset($params[$primary_field])) {
-            $this->apply_params($this->get_country($params[$primary_field])->object);
-        }
-        $this->apply_params($params);
-
-        try {
-            $this->save();
-            $result->info = "Successfully " . ($this->get_primary_key_value() ? "edited" : "added");
-            $result->success = true;
-        }
-        catch(Exception $e) {
-            $result->success = false;
-            $result->info = $e->getMessage();
-        }
-        return $result;
+    public function save(array $params) : Result
+    {
+        update_model($this, $params, $this->get_primary_key_field());
+        return $this->std_save();
     }
 }
 ?>

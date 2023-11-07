@@ -23,21 +23,9 @@ class Model {
         return count($args) > 0 ? $args[0] : "";
     }
 
-    public function apply_params(array|object $params) 
+    public function apply_values(array|object $params) 
     {
-        $reflection = new ReflectionClass(get_class($this));
-
-        foreach ($params as $key => $value) {
-
-            try {
-                $prop = $reflection->getProperty($key);
-                $attributes = $prop->getAttributes(DataColumn::class);
-                if(count($attributes) > 0) {
-                    $this->{$key} = $value;
-                }
-            }
-            catch(Exception $e) { }
-        }
+        apply_where_attribute($this, $params, DataColumn::class);
     }
 
     public function get_primary_key_value() 
@@ -122,6 +110,8 @@ class Model {
             count($prop->getAttributes(DataColumn::class)) > 0);
     }
 
+    #region Statements
+
     protected function select(string $query = "", ?string $types = null, $values = []) {
         try {
             $stmt = $this->execute_statement($query, $types, $values);
@@ -153,18 +143,6 @@ class Model {
         }	
     }
 
-    protected function save(): mysqli_stmt {
-
-        $primary_key = $this->get_primary_key_value();
-
-        if(!$primary_key) {
-            return $this->insert();
-        }
-        else {
-            return $this->update();
-        }
-    }
-
     protected function insert(): mysqli_stmt 
     {
         $sql = QueryGenerator::generate_insert_query($this);
@@ -191,6 +169,72 @@ class Model {
         $stmt = $this->execute_statement($sql, $types, $update_values);
         return $stmt;
     }
+
+    #endregion
+    #region Standard methods
+
+    protected function std_get($id) : ObjectResult 
+    {
+        $result = new ObjectResult();
+        try {
+            $sql = QueryGenerator::generate_select_query($this);
+            $data = $this->select($sql, "s", [$id]);
+            if($data != null && count($data) > 0) {
+                $result->object = $data[0];
+                $result->success = true;
+            }
+            else throw new Exception("No data found");
+        }
+        catch(Exception $e) {
+            $result->set_error($e);
+        }
+        return $result;
+    }
+
+    protected function std_get_all() : DataResult 
+    {
+        $result = new DataResult();
+        $table_name = $this->get_table_name();
+
+        try {
+            if(!$table_name) throw new Exception("Table name is not set");
+
+            $sql = "SELECT * FROM " . $table_name;
+            $data = $this->select($sql);
+            $result->info = $sql;
+            $result->data = $data;
+            $result->success = true;
+        }
+        catch(Exception $e) {
+            $result->set_error($e);
+        }
+        return $result;
+    }
+
+    protected function std_save() : Result 
+    {
+        $result = new Result();
+
+        try {
+            $primary_key = $this->get_primary_key_value();
+
+            if(!$primary_key) {
+                $stmt = $this->insert();
+                $result->info = "Successfully inserted";
+            }
+            else {
+                $stmt = $this->update();
+                $result->info = "Successfully edited";
+            }
+
+            $result->success = true;
+        }
+        catch(Exception $e) {
+            $result->set_error($e);
+        }
+        return $result;
+    }
+    #endregion
 }
 
 ?>
