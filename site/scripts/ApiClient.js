@@ -103,5 +103,49 @@ class API {
          * */
         save: (params) => this.#request("country", "save", params),
     }
+
+    static PrimaryGenres = {
+        /** 
+         * @param {number} id Primary genre ID
+         * @returns {{success: boolean, info: string, object: object}} 
+         * */
+        get: (id) => this.#request("primary_genre", "get", { id }),
+        /** 
+         * @returns {{success: boolean, info: string, data: object[]}} 
+         * */
+        getList: () => this.#request("primary_genre", "get_list"),
+        /** 
+         * @param {object} params
+         * @param {number} [params.id] Genre ID (Insert new primary genre if unset)
+         * @param {string} params.name Genre Name
+         * @returns {{success: boolean, info: string}} 
+         * */
+        save: (params) => this.#request("primary_genre", "save", params),
+        /**
+         * Returns an array of all genres
+         * @param {number} id Primary genre ID
+         * @returns {{success: boolean, info: string, data: object[]}} 
+         */
+        getSubgenres: (id) => this.#request("primary_genre", "get_subgenres", { id }),
+    }
+
+    static Genres = {
+        /** 
+         * @param {number} id Genre ID
+         * @returns {{success: boolean, info: string, object: object}} 
+         * */
+        get: (id) => this.#request("genre", "get", { id }),
+        /** 
+         * @returns {{success: boolean, info: string, data: object[]}} 
+         * */
+        getList: () => this.#request("genre", "get_list"),
+        /** 
+         * @param {object} params
+         * @param {number} [params.id] Genre ID (Insert new genre if unset)
+         * @param {string} params.name Genre Name
+         * @returns {{success: boolean, info: string}} 
+         * */
+        save: (params) => this.#request("genre", "save", params),
+    }
 }
 
