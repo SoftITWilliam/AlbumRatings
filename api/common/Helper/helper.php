@@ -23,7 +23,11 @@ function get_property_with_attr(object|null $object, string $attr_name) : ?Refle
 }
 
 function get_attr(object|null $object, string $attr_name) : ?ReflectionAttribute {
-    $reflector = new ReflectionClass(get_class($object));
+    if($object instanceof ReflectionClass) {
+        $reflector = $object;
+    } else {
+        $reflector = new ReflectionClass(get_class($object));
+    }
     $attr = $reflector->getAttributes($attr_name);
     return count($attr) > 0? $attr[0] : null;
 }

@@ -20,7 +20,10 @@ class Model {
     {
         $attr = get_attr($this, TableName::class);
         $args = $attr->getArguments();
-        return count($args) > 0 ? $args[0] : "";
+        if($args == null || count($args) == 0) {
+            throw new Exception("Class does not have a 'TableName' attribute");
+        }
+        return $args[0];
     }
 
     public function apply_values(array|object $params) 
@@ -179,11 +182,7 @@ class Model {
         try {
             $sql = QueryGenerator::generate_select_query($this);
             $data = $this->select($sql, "s", [$id]);
-            if($data != null && count($data) > 0) {
-                $result->object = $data[0];
-                $result->success = true;
-            }
-            else throw new Exception("No data found");
+            $result = ObjectResult::from_data($data);
         }
         catch(Exception $e) {
             $result->set_error($e);
@@ -197,8 +196,6 @@ class Model {
         $table_name = $this->get_table_name();
 
         try {
-            if(!$table_name) throw new Exception("Table name is not set");
-
             $sql = "SELECT * FROM " . $table_name;
             $data = $this->select($sql);
             $result->info = $sql;
