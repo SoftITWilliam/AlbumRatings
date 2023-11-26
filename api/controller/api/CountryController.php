@@ -14,7 +14,7 @@ class CountryController extends BaseController
         $id = $params["id"];
 
         try {
-            $model = new CountryModel();
+            $model = new Country();
             $result = $model->get($id);
             $this->output_ok($result);
         } catch (Error $e) {
@@ -28,7 +28,7 @@ class CountryController extends BaseController
     public function get_list_action() : void
     {
         try {
-            $model = new CountryModel();
+            $model = new Country();
             $result = $model->get_all();
             $this->output_ok($result);
         } catch (Error $e) {
@@ -46,7 +46,7 @@ class CountryController extends BaseController
         $params = $this->get_query_string_params();
 
         try {
-            $model = new CountryModel();
+            $model = new Country();
             $result = $model->save($params);
             $this->output_ok($result);
         } catch (Error $e) {

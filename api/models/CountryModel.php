@@ -2,12 +2,14 @@
 require_once(PROJECT_ROOT_PATH . "/models/ModelUtil.php");
 
 #[TableName("country")]
-class CountryModel extends Model implements IStandardModel {
+class Country extends Model implements IStandardModel {
 
     #[DataColumn, PrimaryKey]
     public $id;
     #[DataColumn]
-    public ?string $name;
+    public string $name;
+    #[DataColumn]
+    public string $code;
 
     public function get($country_id) : ObjectResult
     {

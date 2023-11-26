@@ -2,13 +2,13 @@
 API.Countries.getList().then(result => {
     if(result.success) {
         result.data.forEach(country => {
-            $("#countries-temp").append($("<p>").text(country.name));
+            const $row = $('<tr>');
+            $row.append($('<td>').append(country.name));
+            $row.append($('<td>').append(country.code));
+            $("#countries").append($row);
         })
     }
 });
-
-//let params = { id: 1, name: "Afghanistan" };
-//API.Countries.save(params);
 
 API.Artists.getList().then(result => {
     if(result.success) {
@@ -41,6 +41,9 @@ API.PrimaryGenres.getList().then(result => {
         })
     });
 })
+
+API.Artists.get(1).then(result => console.log(result));
+API.Artists.get(2).then(result => console.log(result));
 
 //API.Artists.save({ id: 1, name: "100 gecs", years_active: "2015-present", description: "Collaborative project by Laura Les and Dylan Brady." });
 //API.Artists.save({ name: "２８１４", years_active: "2014-present", description: "Collaborative project by 't e l e p a t h テレパシー能力者'  and 'HKE'" });

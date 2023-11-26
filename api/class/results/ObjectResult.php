@@ -11,7 +11,7 @@ class ObjectResult extends Result {
         } 
         else {
             $result->success = true;
-            $result->object = $data[0];
+            $result->object = (object)$data[0];
         }
         return $result;
     }
