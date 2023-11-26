@@ -4,7 +4,6 @@ class PrimaryGenreController extends BaseController
 {
     /**
      * "/primary_genre/get" Endpoint - Get primary genre from id
-     * (currently only basic info)
      */
     public function get_action() : void 
     {
@@ -17,28 +16,23 @@ class PrimaryGenreController extends BaseController
         try {
             $model = new PrimaryGenreModel();
             $result = $model->get($id);
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new ObjectResult();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(ObjectResult::from_error($e));
         }
     }
     
     /**
      * "/primary_genre/get_list" Endpoint - Get list of all primary genres
-     * (currently only basic info)
      */
     public function get_list_action() : void
     {
         try {
             $model = new PrimaryGenreModel();
             $result = $model->get_all();
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new DataResult();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(DataResult::from_error($e));
         }
     }
 
@@ -54,14 +48,15 @@ class PrimaryGenreController extends BaseController
         try {
             $model = new PrimaryGenreModel();
             $result = $model->save($params);
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new Result();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(Result::from_error($e));
         }
     }
 
+    /**
+     * "/primary_genre/get_subgenres" Endpoint - Get all subgenres of primary genre
+     */
     public function get_subgenres_action() : void 
     {
         $this->require_request_method("GET");
@@ -72,11 +67,9 @@ class PrimaryGenreController extends BaseController
         try {
             $model = new PrimaryGenreModel();
             $result = $model->get_subgenres($id);
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new Result();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(DataResult::from_error($e));
         }
     }
 }

@@ -1,8 +1,8 @@
 <?php
 class ObjectResult extends Result {
-    public $object = null;
+    public ?object $object = null;
 
-    static function from_data(array $data) : ObjectResult {
+    public static function from_data(array $data) : ObjectResult {
         $result = new ObjectResult();
 
         if($data == null || count($data) == 0) {
@@ -14,6 +14,13 @@ class ObjectResult extends Result {
             $result->object = $data[0];
         }
         return $result;
+    }
+
+    public static function from_error(Throwable $e) : ObjectResult 
+    {
+        $r = new ObjectResult();
+        $r->set_error($e);
+        return $r;
     }
 }
 ?>

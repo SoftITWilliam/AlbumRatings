@@ -4,7 +4,6 @@ class GenreController extends BaseController
 {
     /**
      * "/genre/get" Endpoint - Get genre from id
-     * (currently only basic info)
      */
     public function get_action() : void 
     {
@@ -17,28 +16,23 @@ class GenreController extends BaseController
         try {
             $model = new GenreModel();
             $result = $model->get($id);
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new ObjectResult();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(ObjectResult::from_error($e));
         }
     }
     
     /**
      * "/genre/get_list" Endpoint - Get list of all genres
-     * (currently only basic info)
      */
     public function get_list_action() : void
     {
         try {
             $model = new GenreModel();
             $result = $model->get_all();
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new DataResult();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(DataResult::from_error($e));
         }
     }
 
@@ -54,11 +48,9 @@ class GenreController extends BaseController
         try {
             $model = new GenreModel();
             $result = $model->save($params);
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new Result();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(Result::from_error($e));
         }
     }
 }

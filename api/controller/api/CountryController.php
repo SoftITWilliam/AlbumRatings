@@ -16,11 +16,9 @@ class CountryController extends BaseController
         try {
             $model = new CountryModel();
             $result = $model->get($id);
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new ObjectResult();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(ObjectResult::from_error($e));
         }
     }
     
@@ -29,14 +27,12 @@ class CountryController extends BaseController
      */
     public function get_list_action() : void
     {
-        $result = new DataResult();
         try {
             $model = new CountryModel();
             $result = $model->get_all();
-            $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(DataResult::from_error($e));
         }
     }
 
@@ -52,13 +48,9 @@ class CountryController extends BaseController
         try {
             $model = new CountryModel();
             $result = $model->save($params);
-            $this->send_output(json_encode($result),
-                array(CONTENT_TYPE_JSON, HEADER_OK)
-            );
+            $this->output_ok($result);
         } catch (Error $e) {
-            $result = new Result();
-            $result->info = 'Something went wrong! (' . $e->getMessage() . ')';
-            $this->output_error_500($result);
+            $this->output_error_500(Result::from_error($e));
         }
     }
 }

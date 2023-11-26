@@ -12,7 +12,7 @@ class BaseController
     /**
      * Get querystring params.
      */
-    protected function get_query_string_params() : array
+    protected final function get_query_string_params() : array
     {
         parse_str($_SERVER['QUERY_STRING'], $query);
         return $query;
@@ -33,31 +33,35 @@ class BaseController
             }
         }
         if (count($missing_params) > 0) {
-            $this->output_error_500('Missing required params: ' . implode(", ", $missing_params));
+            $result = new Result();
+            $result->info = 'Missing required params: ' . implode(", ", $missing_params);
+            $this->output_error_500($result);
         }
     }
 
     /**
      * Output an error if request method is not supported
      */
-    protected function require_request_method(string $supported_method) 
+    protected function require_request_method(string $supported_method) : void
     {
         $req_method = strtoupper($_SERVER["REQUEST_METHOD"]);
         if ($req_method != strtoupper($supported_method)) {
-            $this->output_error_422("Method not supported");
+            $result = new Result();
+            $result->info = "Method not supported";
+            $this->output_error_422($result);
         }
     }
 
     #endregion
-    #region Output
+    #region Output methods
 
     /**
      * Send API output.
      * (EXITS SCRIPT)
      */
-    protected function send_output($data, $httpHeaders=array())
+    private function send_output($data, array $httpHeaders = []) : void
     {
-        header_remove('Set-Cookie');
+        header_remove('Set-Cookie'); // ?
         if (is_array($httpHeaders) && count($httpHeaders)) {
             foreach ($httpHeaders as $httpHeader) {
                 header($httpHeader);
@@ -67,31 +71,24 @@ class BaseController
         exit;
     }
 
-    private function output_error(Result|string $info, array $http_headers) {
-        if($info instanceof Result) {
-            $result = $info;
-        } else {
-            $result = new Result();
-            $result->info = $info;
-        }
-        $this->send_output(json_encode($result), $http_headers);
+    /**
+     * Encode result object and output it
+     */
+    protected final function output_ok(Result $result) : void {
+        $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, HEADER_OK]);
     }
 
-    /**
-     * Send API error 500 (WILL EXIT SCRIPT)
-     */
-    protected function output_error_500(Result|string $info) 
-    {
-        $headers = array(CONTENT_TYPE_JSON, HEADER_ERROR_500);
-        $this->output_error($info, $headers);
+    private function output_error(Result $result, string $header_error) : void {
+        $this->send_output(json_encode($result), [CONTENT_TYPE_JSON, $header_error]);
     }
-    /**
-     * Send API error 422 (WILL EXIT SCRIPT)
-     */
-    protected function output_error_422(Result|string $info) 
-    {
-        $headers = array(CONTENT_TYPE_JSON, HEADER_ERROR_422);
-        $this->output_error($info, $headers);
+
+    /** Send API error 500 (WILL EXIT SCRIPT) */
+    protected final function output_error_500(Result $result) : void { 
+        $this->output_error($result, HEADER_ERROR_500); 
+    }
+    /** Send API error 422 (WILL EXIT SCRIPT) */
+    protected final function output_error_422(Result $result) : void { 
+        $this->output_error($result, HEADER_ERROR_422); 
     }
 
     #endregion
