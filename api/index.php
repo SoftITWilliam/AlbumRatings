@@ -4,18 +4,12 @@ require __DIR__ . "/controller/api/CountryController.php";
 require __DIR__ . "/controller/api/ArtistController.php";
 require __DIR__ . "/controller/api/PrimaryGenreController.php";
 require __DIR__ . "/controller/api/GenreController.php";
+require __DIR__ . "/controller/api/FormatController.php";
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', $uri);
 $uri = array_slice($uri, array_search("api", $uri) + 1);
 // 0 -> "index.php", 1 -> controller name, 2 -> controller method
-
-function error_result(string $info) {
-    $r = new Result();
-    $r->info = $info;
-    echo json_encode($r);
-    exit();
-}
 
 try {
     $controller = null;
@@ -25,20 +19,21 @@ try {
         case "country": $controller = new CountryController(); break;
         case "primary_genre": $controller = new PrimaryGenreController(); break;
         case "genre": $controller = new GenreController(); break;
+        case "format": $controller = new FormatController(); break;
     }
 
     if($controller === null) {
-        error_result("Invalid module");
+        throw new Exception("Invalid module");
     }
 
     $str_method_name = $uri[2] . '_action';
     if(method_exists($controller, $str_method_name) === false) {
-        error_result("Invalid method: '" . $uri[1] . "/" . $uri[2] . "'");
+        throw new Exception("Invalid method: '" . $uri[1] . "/" . $uri[2] . "'");
     }
     $controller->{$str_method_name}();
 }
-
 catch(Exception $e) {
-    error_result($e->getMessage());
+    echo json_encode(Result::from_error($e));
+    exit();
 }
 ?>

@@ -46,8 +46,14 @@ API.PrimaryGenres.getList().then(result => {
     });
 })
 
-API.Artists.get(1).then(result => console.log(result));
-API.Artists.get(2).then(result => console.log(result));
+API.Formats.getList().then(result => {
+    if(result.success === false) return;
+
+    // Load and display formats
+    result.data.forEach(format => {
+        $('#formats').append($('<p>').append(format.name));
+    });
+})
 
 //API.Artists.save({ id: 1, name: "100 gecs", years_active: "2015-present", description: "Collaborative project by Laura Les and Dylan Brady." });
 //API.Artists.save({ name: "２８１４", years_active: "2014-present", description: "Collaborative project by 't e l e p a t h テレパシー能力者'  and 'HKE'" });

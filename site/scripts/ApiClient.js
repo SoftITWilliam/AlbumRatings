@@ -147,5 +147,24 @@ class API {
          * */
         save: (params) => this.#request("genre", "save", params),
     }
+
+    static Formats = {
+        /** 
+         * @param {number} id Format ID
+         * @returns {ApiObjectResult} 
+         * */
+        get: (id) => this.#request("format", "get", { id }),
+        /** 
+         * @returns {ApiDataResult} 
+         * */
+        getList: () => this.#request("format", "get_list"),
+        /** 
+         * @param {object} params
+         * @param {number} [params.id] Genre ID (Insert new genre if unset)
+         * @param {string} params.name Genre Name
+         * @returns {ApiResult} 
+         * */
+        save: (params) => this.#request("format", "save", params),
+    }
 }
 
