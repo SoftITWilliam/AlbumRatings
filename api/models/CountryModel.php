@@ -26,5 +26,15 @@ class Country extends Model implements IStandardModel {
         update_model($this, $params, $this->get_primary_key_field());
         return $this->std_save();
     }
+
+    public function search($value) : DataResult 
+    {
+        $table = table_name_of(Country::class);
+        $sql = "SELECT * FROM $table 
+            WHERE name LIKE ? 
+            LIMIT 20";
+        $data = $this->select($sql, "s", ["%$value%"]);
+        return DataResult::from_data($data);
+    }
 }
 ?>

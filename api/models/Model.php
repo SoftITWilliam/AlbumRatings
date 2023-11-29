@@ -127,7 +127,7 @@ class Model {
         }
     }
 
-    private function execute_statement(string $query = "", ?string $types = null, $values = []): mysqli_stmt
+    protected function execute_statement(string $query = "", ?string $types = null, $values = []): mysqli_stmt
     {
         try {
             $stmt = $this->connection->prepare($query);

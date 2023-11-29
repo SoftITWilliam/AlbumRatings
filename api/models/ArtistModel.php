@@ -42,7 +42,30 @@ class Artist extends Model implements IStandardModel {
                 WHERE xref.artist_id = ?";
 
         $data = $this->select($sql, "s", [$artist_id]);
+        
         return $data;
+    }
+
+    public function add_country($artist_id, $country_code) : Result 
+    {
+        $result = new Result();
+
+        $sql = "INSERT INTO artist_country_xref (artist_id, country_code) VALUES (?, ?)";
+
+        $stmt = $this->execute_statement($sql, "ss", [$artist_id, $country_code]);
+        $result->success = $stmt->affected_rows > 0;
+        return $result;
+    }
+
+    public function remove_country($artist_id, $country_code) : Result 
+    {
+        $result = new Result();
+
+        $sql = "DELETE FROM artist_country_xref WHERE artist_id = ? AND country_code = ?";
+
+        $stmt = $this->execute_statement($sql, "ss", [$artist_id, $country_code]);
+        $result->success = $stmt->affected_rows > 0;
+        return $result;
     }
 }
 ?>

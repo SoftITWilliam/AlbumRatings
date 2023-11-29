@@ -53,4 +53,23 @@ class CountryController extends BaseController
             $this->output_error_500(Result::from_error($e));
         }
     }
+
+    /**
+     * "/country/search" Endpoint - Get countries that match search name
+     */
+    public function search_action() : void
+    {
+        $this->require_request_method("GET");
+        $this->require_params("value");
+        
+        $params = $this->get_query_string_params();
+
+        try {
+            $model = new Country();
+            $result = $model->search($params["value"]);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(DataResult::from_error($e));
+        }
+    }
 }

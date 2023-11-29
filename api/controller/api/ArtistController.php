@@ -61,4 +61,36 @@ class ArtistController extends BaseController
             $this->output_error_500(Result::from_error($e));
         }
     }
+
+    public function add_country_action() : void 
+    {
+        $this->require_request_method("GET");
+        $this->require_params("id", "code");
+
+        $params = $this->get_query_string_params();
+
+        try {
+            $model = new Artist();
+            $result = $model->add_country($params["id"], $params["code"]);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(Result::from_error($e));
+        }
+    }
+
+    public function remove_country_action() : void 
+    {
+        $this->require_request_method("GET");
+        $this->require_params("id", "code");
+
+        $params = $this->get_query_string_params();
+
+        try {
+            $model = new Artist();
+            $result = $model->remove_country($params["id"], $params["code"]);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(Result::from_error($e));
+        }
+    }
 }

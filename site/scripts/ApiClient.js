@@ -92,6 +92,18 @@ class API {
          * @returns {ApiResult} 
          * */
         save: (params) => this.#request("artist", "save", params),
+        /**
+         * @param {number} id Artist ID
+         * @param {string} code Country code
+         * @returns {ApiResult}
+         */
+        addCountry: (id, code) => this.#request("artist", "add_country", { id, code }),
+        /**
+         * @param {number} id Artist ID
+         * @param {string} code Country code
+         * @returns {ApiResult}
+         */
+        removeCountry: (id, code) => this.#request("artist", "remove_country", { id, code }),
     }
 
     static Countries = {
@@ -111,6 +123,11 @@ class API {
          * @returns {ApiResult} 
          * */
         save: (params) => this.#request("country", "save", params),
+        /**
+         * @param {string} value Search value
+         * @returns {ApiDataResult}
+         */
+        search: (value) => this.#request("country", "search", { value }),
     }
 
     static PrimaryGenres = {
