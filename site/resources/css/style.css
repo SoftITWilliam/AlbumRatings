@@ -49,3 +49,10 @@ body {
         font-weight: bold;
     }
 }
+
+td.emoji-cell {
+    font-size: 2rem;
+    padding: 0 0.75rem;
+    line-height: 0;
+    vertical-align: middle;
+}

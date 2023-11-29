@@ -13,11 +13,15 @@ API.Countries.getList().then(result => {
 API.Artists.getList().then(result => {
     if(result.success) {
         result.data.forEach(artist => {
-            const $row = $("<tr>");
-            $row.append($("<td>").append(artist.name));
-            $row.append($("<td>").append(artist.years_active));
-            $row.append($("<td>").append(artist.description));
-            $("#artists").append($row);
+
+            let flags = artist.countries.map(country => getFlagEmoji(country.code));
+
+            const $row = $('<tr>');
+            $row.append($('<td>').append(artist.name));
+            $row.append($('<td>').append(artist.years_active));
+            $row.append($('<td>').append(artist.description));
+            $row.append($('<td>').append(flags.join(' ')).addClass('emoji-cell'))
+            $('#artists').append($row);
         })
     }
 })

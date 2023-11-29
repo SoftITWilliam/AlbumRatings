@@ -15,9 +15,9 @@ class ArtistController extends BaseController
 
         try {
             $model = new Artist();
-            $artist_result = $model->get($id);
-            $artist_result->object->countries = $model->get_countries_for($id);
-            $this->output_ok($artist_result);
+            $result = $model->get($id);
+            $result->object->countries = $model->get_countries_for($id);
+            $this->output_ok($result);
         } catch (Error $e) {
             $this->output_error_500(ObjectResult::from_error($e));
         }
@@ -31,6 +31,11 @@ class ArtistController extends BaseController
         try {
             $model = new Artist();
             $result = $model->get_all();
+
+            foreach($result->data as &$artist) {
+                $artist["countries"] = $model->get_countries_for($artist["id"]);
+            }
+            
             $this->output_ok($result);
         } catch (Error $e) {
             $this->output_error_500(DataResult::from_error($e));
