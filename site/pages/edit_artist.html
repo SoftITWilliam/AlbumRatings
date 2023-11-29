@@ -54,46 +54,69 @@
 <script type="text/javascript" src="../scripts/util.js"></script>
 
 <script type="text/javascript">
+
+    const NEW_ARTIST_ID = '_NEW_';
+
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const ARTIST_ID = urlParams.get('id');
     const SUCCESS = urlParams.get('success');
 
+    const EDIT = 'edit';
+    const ADD = 'add';
+
+    const ACTION = ARTIST_ID === NEW_ARTIST_ID ? ADD : EDIT;
+
     if(SUCCESS === 'true') {
-        alert("Edit was successful!");
+        alert("Sucessfully saved!");
     } else if(SUCCESS === 'false') {
-        alert("Edit was not successful!")
+        alert("Could not save!")
     }
 
+    // Redirect to add artist
     if(ARTIST_ID === null) {
-        // todo redirect to add_artist or something
-        alert('Invalid artist ID'); 
-        throw new Error('Invalid artist ID');
+        window.location.href = window.location + '?id=' + NEW_ARTIST_ID;
+    }
+    // Add new artist
+    else if(ACTION === ADD) {
+        addInit();
+    }
+    // Edit existing artist
+    else if(ACTION === EDIT) {
+        editInit(ARTIST_ID);
     }
 
-    API.Artists.get(ARTIST_ID).then(result => {
-        if(result.success === false) {
-            alert(result.info);
-            throw new Error(result.info)
-        }
-        else {
-            populateForm(result.object);
-        }
-    });
+    function addInit() {
+        $('.card-title').text('Add new artist');
+        $('.card-body button[type="submit"]').text('Add');
+    }
 
-    function populateForm(artist) {
-        $('#id').val(artist.id);
-        $('#name').val(artist.name);
-        $('#years_active').val(artist.years_active);
-        $('#description').val(artist.description);
+    function editInit(id) {
+        API.Artists.get(id).then(result => {
+            if(result.success === false) {
+                alert(result.info);
+                throw new Error(result.info)
+            }
+            else {
+                const artist = result.object;
+                $('#id').val(artist.id);
+                $('#name').val(artist.name);
+                $('#years_active').val(artist.years_active);
+                $('#description').val(artist.description);
+            }
+        });
     }
 
     $('#form').submit(event => {
         const data = new FormData(event.target);
-        data.append("id", $('#id').val());
+
+        if(ACTION === EDIT) {
+            data.append("id", $('#id').val());
+        }
 
         API.Artists.save(data).then(result => {
-            window.location.href = window.location + "&success=" + result.success;
+            let url = location.protocol + '//' + location.host + location.pathname;
+            window.location.href = `${url}?id=${result.info}&success=${result.success}`;
         });
         return false;
     })
