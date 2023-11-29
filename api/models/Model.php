@@ -149,7 +149,6 @@ class Model {
     protected function insert(): mysqli_stmt 
     {
         $sql = QueryGenerator::generate_insert_query($this);
-        echo $sql;
 
         // Construct an array with values to bind
         $insert_values = $this->get_update_values();
@@ -217,11 +216,11 @@ class Model {
 
             if(!$primary_key) {
                 $stmt = $this->insert();
-                $result->info = "Successfully inserted";
+                $result->info = $this->connection->insert_id;
             }
             else {
                 $stmt = $this->update();
-                $result->info = "Successfully edited";
+                $result->info = $this->get_primary_key_value();
             }
 
             $result->success = true;
