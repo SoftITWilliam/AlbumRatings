@@ -11,6 +11,8 @@ class Artist extends Model implements IStandardModel {
     public ?string $description;
     #[DataColumn]
     public ?string $years_active;
+    #[DataColumn]
+    public ?string $sorting_name;
 
     public function get($artist_id) : ObjectResult 
     {
@@ -19,7 +21,10 @@ class Artist extends Model implements IStandardModel {
 
     public function get_all() : DataResult 
     {
-        return $this->std_get_all();
+        $table = table_name_of(Artist::class);
+        $sql = "SELECT * FROM $table ORDER BY COALESCE(NULLIF(sorting_name, ''), name)";
+        $data = $this->select($sql);
+        return DataResult::from_data($data);
     }
 
     public function save(array $params) : Result

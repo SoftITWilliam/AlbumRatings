@@ -28,6 +28,12 @@
                             <label class="col-form-label col-4" for="name">Artist name</label>
                             <input type="text" class="form-control" id="name" name="name">
                         </div>
+                        
+                        <div class="input-row">
+                            <label class="col-form-label col-4" for="sorting_name">Sort as*</label>
+                            <input type="text" class="form-control" id="sorting_name" name="sorting_name">
+                        </div>
+
                         <div class="input-row">
                             <label class="col-form-label col-4" for="years_active">Years active</label>
                             <input type="text" class="form-control" id="years_active" name="years_active">
@@ -38,7 +44,9 @@
                             <textarea class="form-control" id="description" name="description"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-default px-4" style="margin-left: 15px;">Save</button>
+                        <p class="text-secondary" style="margin-left: 15px">*Only required for artists with names that can't be alphabetically sorted</p>
+
+                        <button type="submit" class="btn btn-default px-4 mt-2" style="margin-left: 15px;">Save</button>
                     </div>
                 </div>
             </div>
@@ -101,6 +109,7 @@
                 const artist = result.object;
                 $('#id').val(artist.id);
                 $('#name').val(artist.name);
+                $('#sorting_name').val(artist.sorting_name);
                 $('#years_active').val(artist.years_active);
                 $('#description').val(artist.description);
             }
