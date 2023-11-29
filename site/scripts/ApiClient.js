@@ -31,12 +31,21 @@ class API {
     /**
      * @param {string} moduleName Name of module (ex. Country, Album, Artist)
      * @param {string} methodName Name of method (ex. get, get_list, save)
-     * @param {string} data API method parameters
+     * @param {object|FormData} data API method parameters
      */
     static async #request(moduleName, methodName, data = {}) {
 
         const url = [this.Config.PATH, moduleName, methodName].filter(e => e).join("/");
         const logPath = url.replace(this.Config.PATH, "api");
+
+        // Convert FormData to object
+        if(data instanceof FormData) {
+            const formDataObject = {};
+            data.forEach(function(value, key){
+                formDataObject[key] = value;
+            });
+            data = formDataObject;
+        }
 
         var parseResult = (r) => {
             try {
@@ -67,11 +76,11 @@ class API {
     static Artists = {
         /** 
          * @param {number} id Artist ID
-         * @returns {{success: boolean, info: string, object: object}} 
+         * @returns {ApiObjectResult} 
          * */
         get: (id) => this.#request("artist", "get", { id }),
         /** 
-         * @returns {{success: boolean, info: string, data: object[]}} 
+         * @returns {ApiDataResult} 
          * */
         getList: () => this.#request("artist", "get_list"),
         /** 
@@ -80,7 +89,7 @@ class API {
          * @param {string} params.name
          * @param {string} params.description
          * @param {string} params.years_active
-         * @returns {{success: boolean, info: string}} 
+         * @returns {ApiResult} 
          * */
         save: (params) => this.#request("artist", "save", params),
     }
@@ -88,18 +97,18 @@ class API {
     static Countries = {
         /** 
          * @param {number} id Country ID
-         * @returns {{success: boolean, info: string, object: object}} 
+         * @returns {ApiObjectResult} 
          * */
         get: (id) => this.#request("country", "get", { id }),
         /** 
-         * @returns {{success: boolean, info: string, data: object[]}} 
+         * @returns {ApiDataResult} 
          * */
         getList: () => this.#request("country", "get_list"),
         /** 
          * @param {object} params
          * @param {number} [params.id] Country ID (Insert new country if unset)
          * @param {string} params.name Country Name
-         * @returns {{success: boolean, info: string}} 
+         * @returns {ApiResult} 
          * */
         save: (params) => this.#request("country", "save", params),
     }
@@ -107,24 +116,24 @@ class API {
     static PrimaryGenres = {
         /** 
          * @param {number} id Primary genre ID
-         * @returns {{success: boolean, info: string, object: object}} 
+         * @returns {ApiObjectResult} 
          * */
         get: (id) => this.#request("primary_genre", "get", { id }),
         /** 
-         * @returns {{success: boolean, info: string, data: object[]}} 
+         * @returns {ApiDataResult} 
          * */
         getList: () => this.#request("primary_genre", "get_list"),
         /** 
          * @param {object} params
          * @param {number} [params.id] Genre ID (Insert new primary genre if unset)
          * @param {string} params.name Genre Name
-         * @returns {{success: boolean, info: string}} 
+         * @returns {ApiResult} 
          * */
         save: (params) => this.#request("primary_genre", "save", params),
         /**
          * Returns an array of all genres
          * @param {number} id Primary genre ID
-         * @returns {{success: boolean, info: string, data: object[]}} 
+         * @returns {ApiDataResult} 
          */
         getSubgenres: (id) => this.#request("primary_genre", "get_subgenres", { id }),
     }
@@ -132,18 +141,19 @@ class API {
     static Genres = {
         /** 
          * @param {number} id Genre ID
-         * @returns {{success: boolean, info: string, object: object}} 
+         * @returns {ApiObjectResult} 
          * */
         get: (id) => this.#request("genre", "get", { id }),
         /** 
-         * @returns {{success: boolean, info: string, data: object[]}} 
+         * @returns {ApiDataResult} 
          * */
         getList: () => this.#request("genre", "get_list"),
         /** 
          * @param {object} params
          * @param {number} [params.id] Genre ID (Insert new genre if unset)
+         * @param {number} params.primary_genre_id Primary genre ID
          * @param {string} params.name Genre Name
-         * @returns {{success: boolean, info: string}} 
+         * @returns {ApiResult} 
          * */
         save: (params) => this.#request("genre", "save", params),
     }
@@ -160,8 +170,8 @@ class API {
         getList: () => this.#request("format", "get_list"),
         /** 
          * @param {object} params
-         * @param {number} [params.id] Genre ID (Insert new genre if unset)
-         * @param {string} params.name Genre Name
+         * @param {number} [params.id] Format ID (Insert new format if unset)
+         * @param {string} params.name Format Name
          * @returns {ApiResult} 
          * */
         save: (params) => this.#request("format", "save", params),

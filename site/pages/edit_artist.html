@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom stylesheets -->
+    <link rel="stylesheet" href="../resources/css/style.css">
+    <title>Album Ratings</title>
+</head>
+<body>
+    <main class="p-5">
+        <form id="form">
+            <div class="card card-purple w-100">
+                <!-- Navigation-->
+                <div class="card-header d-flex align-items-center" style="gap: 2rem;">
+                    <a class="arrow-back flip-v" href="index.html">➜</a>
+                    <h3 class="card-title">Edit artist</h3>
+                </div>
+    
+                <div class="card-body">
+                    <div class="col-lg-6">
+
+                        <input type="hidden" id="id"> 
+
+                        <div class="input-row">
+                            <label class="col-form-label col-4" for="name">Artist name</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="input-row">
+                            <label class="col-form-label col-4" for="years_active">Years active</label>
+                            <input type="text" class="form-control" id="years_active" name="years_active">
+                        </div>
+
+                        <div class="input-row">
+                            <label class="col-form-label col-4" for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-default px-4" style="margin-left: 15px;">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+</body>
+<!-- Libraries -->
+<script type="text/javascript" src="../../lib/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- Scripts -->
+<script type="text/javascript" src="../scripts/ApiClient.js"></script>
+<script type="text/javascript" src="../scripts/util.js"></script>
+
+<script type="text/javascript">
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const ARTIST_ID = urlParams.get('id');
+    const SUCCESS = urlParams.get('success');
+
+    if(SUCCESS === 'true') {
+        alert("Edit was successful!");
+    } else if(SUCCESS === 'false') {
+        alert("Edit was not successful!")
+    }
+
+    if(ARTIST_ID === null) {
+        // todo redirect to add_artist or something
+        alert('Invalid artist ID'); 
+        throw new Error('Invalid artist ID');
+    }
+
+    API.Artists.get(ARTIST_ID).then(result => {
+        if(result.success === false) {
+            alert(result.info);
+            throw new Error(result.info)
+        }
+        else {
+            populateForm(result.object);
+        }
+    });
+
+    function populateForm(artist) {
+        $('#id').val(artist.id);
+        $('#name').val(artist.name);
+        $('#years_active').val(artist.years_active);
+        $('#description').val(artist.description);
+    }
+
+    $('#form').submit(event => {
+        const data = new FormData(event.target);
+        data.append("id", $('#id').val());
+
+        API.Artists.save(data).then(result => {
+            window.location.href = window.location + "&success=" + result.success;
+        });
+        return false;
+    })
+
+</script>
+</html>

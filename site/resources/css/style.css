@@ -7,6 +7,7 @@
     --ghost-white: #F3E8EE;
     --mountbatten-pink: #9E829C;
     --pink-lavender: #FFC8FB;
+    --pink-lavender-rgb: 255, 199, 251
     --pale-pink: #FFE4F3;
     --amaranth-pink: #FF92C2;
 }
@@ -29,6 +30,11 @@ body {
         
         & .nav-link:not(.active):hover {
             border-color: var(--ghost-white);
+        }
+
+        & .card-title {
+            color: white;
+            margin-bottom: 0;
         }
     }
 }
@@ -55,4 +61,70 @@ td.emoji-cell {
     padding: 0 0.75rem;
     line-height: 0;
     vertical-align: middle;
+}
+
+.input-row {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-bottom: 1rem;
+
+    & label {
+        font-weight: 600;
+    }
+}
+
+.form-control:focus {
+    border-color: var(--mountbatten-pink);
+    box-shadow: 0 0 0 .2rem var(--pink-lavender);
+}
+
+.btn.btn-default {
+    background-color: var(--mountbatten-pink);
+    color: white;
+}
+/*
+.card-header .arrow-back {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    background-color: var(--ghost-white);
+    border-radius: 50%;
+
+    & a {
+        font-size: 1.5rem;
+        font-weight: bold;
+        width: 100%;
+        color: var(--mountbatten-pink);
+        text-align: center;
+        margin-bottom: 2px;
+    }
+
+    &:hover {
+        background-color: white;
+    }
+
+    & a:hover {
+        text-decoration: none;
+        filter: brightness(1.25);
+    }
+}
+*/
+
+.card-header .arrow-back {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: var(--ghost-white);
+    line-height: 0;
+
+    &:hover {
+        color: white;
+        text-decoration: none;
+    }
+}
+
+.flip-v {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
 }

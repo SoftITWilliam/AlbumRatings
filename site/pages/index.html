@@ -82,63 +82,62 @@
 <script type="text/javascript" src="../scripts/ApiClient.js"></script>
 <script type="text/javascript" src="../scripts/util.js"></script>
 <script type="text/javascript">
-    
-API.Countries.getList().then(result => {
-    if(result.success === false) return;
+    API.Countries.getList().then(result => {
+        if(result.success === false) return;
 
-    // Load and display all countries
-    result.data.forEach(country => {
-        const $row = $('<tr>');
-        $row.append($('<td>').append(country.name));
-        $row.append($('<td>').append(country.code));
-        $("#countries").append($row);
-    })
-});
-
-API.Artists.getList().then(result => {
-    if(result.success === false) return;
-
-    // Load and display all artists
-    result.data.forEach(artist => {
-        let flags = artist.countries.map(country => getFlagEmoji(country.code));
-
-        const $row = $('<tr>');
-        $row.append($('<td>').append(artist.name));
-        $row.append($('<td>').append(artist.years_active));
-        $row.append($('<td>').append(artist.description));
-        $row.append($('<td>').append(flags.join(' ')).addClass('emoji-cell'))
-        $('#artists').append($row);
-    })
-})
-
-API.PrimaryGenres.getList().then(result => {
-    if(result.success === false) return;
-
-    // Load and display primary genres
-    result.data.forEach(primaryGenre => {
-
-        const $e = $('<div>').addClass('genre-box-temp')
-        $e.append($('<h1>').append(primaryGenre.name));
-        $('#genres').append($e);
-
-        // Load and display subgenres
-        API.PrimaryGenres.getSubgenres(primaryGenre.id).then(result2 => {
-            if(result2.success === false) return;
-            result2.data.forEach(genre => {
-                $e.append($('<p>').append(genre.name));
-            })
+        // Load and display all countries
+        result.data.forEach(country => {
+            const $row = $('<tr>');
+            $row.append($('<td>').text(country.name));
+            $row.append($('<td>').text(country.code));
+            $("#countries").append($row);
         })
     });
-})
 
-API.Formats.getList().then(result => {
-    if(result.success === false) return;
+    API.Artists.getList().then(result => {
+        if(result.success === false) return;
 
-    // Load and display formats
-    result.data.forEach(format => {
-        $('#formats').append($('<p>').append(format.name));
-    });
-})
+        // Load and display all artists
+        result.data.forEach(artist => {
+            let flags = artist.countries.map(country => getFlagEmoji(country.code));
+            let url = 'edit_artist.html?id=' + artist.id;
 
+            const $row = $('<tr>');
+            $row.append($('<td>').append($('<a>').attr('href', url).text(artist.name)));
+            $row.append($('<td>').text(artist.years_active));
+            $row.append($('<td>').text(artist.description));
+            $row.append($('<td>').text(flags.join(' ')).addClass('emoji-cell'))
+            $('#artists').append($row);
+        })
+    })
+
+    API.PrimaryGenres.getList().then(result => {
+        if(result.success === false) return;
+
+        // Load and display primary genres
+        result.data.forEach(primaryGenre => {
+
+            const $e = $('<div>').addClass('genre-box-temp')
+            $e.append($('<h1>').text(primaryGenre.name));
+            $('#genres').append($e);
+
+            // Load and display subgenres
+            API.PrimaryGenres.getSubgenres(primaryGenre.id).then(result2 => {
+                if(result2.success === false) return;
+                result2.data.forEach(genre => {
+                    $e.append($('<p>').text(genre.name));
+                })
+            })
+        });
+    })
+
+    API.Formats.getList().then(result => {
+        if(result.success === false) return;
+
+        // Load and display formats
+        result.data.forEach(format => {
+            $('#formats').append($('<p>').text(format.name));
+        });
+    })
 </script>
 </html>
