@@ -2,7 +2,6 @@
 require __DIR__ . "/inc/bootstrap.php";
 require __DIR__ . "/controller/api/CountryController.php";
 require __DIR__ . "/controller/api/ArtistController.php";
-require __DIR__ . "/controller/api/PrimaryGenreController.php";
 require __DIR__ . "/controller/api/GenreController.php";
 require __DIR__ . "/controller/api/FormatController.php";
 
@@ -17,7 +16,6 @@ try {
     switch($uri[1]) {
         case "artist": $controller = new ArtistController(); break;
         case "country": $controller = new CountryController(); break;
-        case "primary_genre": $controller = new PrimaryGenreController(); break;
         case "genre": $controller = new GenreController(); break;
         case "format": $controller = new FormatController(); break;
     }

@@ -8,21 +8,99 @@ class GenreModel extends Model implements IStandardModel {
     public $id;
     #[DataColumn]
     public ?string $name;
+    #[DataColumn]
+    public ?string $description;
 
     public function get($genre_id) : ObjectResult
     {
-        $genre_table = table_name_of(GenreModel::class);
-        $primary_genre_table = table_name_of(PrimaryGenreModel::class);
+        return $this->std_get($genre_id);
+    }
 
-        $sql = "SELECT g.id, g.name, g.primary_genre_id, p.name AS primary_genre_name
-                FROM $genre_table AS g
-                JOIN $primary_genre_table AS p
-                    ON p.id = g.primary_genre_id
-                WHERE g.id = ?";
+    public function get_subgenres($genre_id) : DataResult 
+    {
+        $genre_table = table_name_of(GenreModel::class);
+
+        $sql = "SELECT * FROM $genre_table WHERE parent_id = ?";
+
+        $data = $this->select($sql, "s", [$genre_id]);
+        $result = DataResult::from_data($data);
+        return $result;
+    }
+
+    public function get_subgenre_tree($genre_id) : DataResult
+    {
+        $genre_table = table_name_of(GenreModel::class);
+
+        $sql = "WITH RECURSIVE genre_tree AS (
+                    SELECT id, parent_id, name, description
+                    FROM $genre_table
+                    WHERE id = ?
+                    UNION ALL
+                    SELECT g.id, g.parent_id, g.name
+                    FROM $genre_table g
+                    JOIN genre_tree gh ON g.parent_id = gh.id
+                )
+                SELECT id, parent_id, name, description
+                FROM genre_tree;";
+
+        $data = $this->select($sql, "s", [$genre_id]);
+        $result = DataResult::from_data($data);
+        return $result;
+    }
+
+    public function get_top_level_genre($genre_id) : ObjectResult
+    {
+        $genre_table = table_name_of(GenreModel::class);
+
+        $sql = "WITH RECURSIVE GenreHierarchy AS (
+                    SELECT id, parent_id, name, description
+                    FROM $genre_table
+                    WHERE id = ? 
+                    UNION ALL
+                    SELECT g.id, g.parent_id, g.name
+                    FROM $genre_table g
+                    JOIN GenreHierarchy gh ON g.id = gh.parent_id
+                )
+                SELECT id, name, description
+                FROM GenreHierarchy
+                WHERE parent_id IS NULL";
 
         $data = $this->select($sql, "s", [$genre_id]);
         $result = ObjectResult::from_data($data);
-        if($result->success) $result->info = $sql;
+        return $result;
+    }
+
+    public function get_ancestors($genre_id) : DataResult
+    {
+        $genre_table = table_name_of(GenreModel::class);
+
+        $sql = "WITH RECURSIVE genre_ancestors AS (
+                    SELECT id, parent_id, name, description
+                    FROM $genre_table
+                    WHERE id = ?
+                    UNION ALL
+                    SELECT g.id, g.parent_id, g.name, g.description
+                    FROM $genre_table g
+                    JOIN genre_ancestors ga ON g.id = ga.parent_id
+                )
+                SELECT id, parent_id, name
+                FROM genre_ancestors;";
+
+        $data = $this->select($sql, "s", [$genre_id]);
+        $result = DataResult::from_data($data);
+        return $result;
+    }
+
+    public function get_all_top_level_genres() : DataResult
+    {
+        $genre_table = table_name_of(GenreModel::class);
+
+        $sql = "SELECT id, name, description
+                FROM $genre_table
+                WHERE parent_id IS NULL";
+
+        $data = $this->select($sql);
+        $result = DataResult::from_data($data);
         return $result;
     }
 
@@ -37,4 +115,3 @@ class GenreModel extends Model implements IStandardModel {
         return $this->std_save();
     }
 }
-?>

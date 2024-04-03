@@ -21,6 +21,100 @@ class GenreController extends BaseController
             $this->output_error_500(ObjectResult::from_error($e));
         }
     }
+
+    /**
+     * "/genre/get_subgenres" Endpoint - Get all genres with this genre as its parent
+     */
+    public function get_subgenres_action() : void 
+    {
+        $this->require_request_method("GET");
+        $this->require_params("id");
+
+        $params = $this->get_query_string_params();
+        $id = $params["id"];
+
+        try {
+            $model = new GenreModel();
+            $result = $model->get_subgenres($id);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(DataResult::from_error($e));
+        }
+    }
+
+    /**
+     * "/genre/get_subgenre_tree" Endpoint
+     */
+    public function get_subgenre_tree_action() : void 
+    {
+        $this->require_request_method("GET");
+        $this->require_params("id");
+
+        $params = $this->get_query_string_params();
+        $id = $params["id"];
+
+        try {
+            $model = new GenreModel();
+            $result = $model->get_subgenre_tree($id);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(DataResult::from_error($e));
+        }
+    }
+
+    /**
+     * "/genre/get_top_level_genre_action" Endpoint
+     */
+    public function get_top_level_genre_action() : void 
+    {
+        $this->require_request_method("GET");
+        $this->require_params("id");
+
+        $params = $this->get_query_string_params();
+        $id = $params["id"];
+
+        try {
+            $model = new GenreModel();
+            $result = $model->get_top_level_genre($id);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(ObjectResult::from_error($e));
+        }
+    }
+
+    /**
+     * "/genre/get_ancestors" Endpoint
+     */
+    public function get_ancestors_action() : void 
+    {
+        $this->require_request_method("GET");
+        $this->require_params("id");
+
+        $params = $this->get_query_string_params();
+        $id = $params["id"];
+
+        try {
+            $model = new GenreModel();
+            $result = $model->get_ancestors($id);
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(DataResult::from_error($e));
+        }
+    }
+
+    /**
+     * 
+     */
+    public function get_all_top_level_genres_action() : void 
+    {
+        try {
+            $model = new GenreModel();
+            $result = $model->get_all_top_level_genres();
+            $this->output_ok($result);
+        } catch (Error $e) {
+            $this->output_error_500(DataResult::from_error($e));
+        }
+    }
     
     /**
      * "/genre/get_list" Endpoint - Get list of all genres

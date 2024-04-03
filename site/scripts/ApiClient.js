@@ -130,31 +130,6 @@ class API {
         search: (value) => this.#request("country", "search", { value }),
     }
 
-    static PrimaryGenres = {
-        /** 
-         * @param {number} id Primary genre ID
-         * @returns {ApiObjectResult} 
-         * */
-        get: (id) => this.#request("primary_genre", "get", { id }),
-        /** 
-         * @returns {ApiDataResult} 
-         * */
-        getList: () => this.#request("primary_genre", "get_list"),
-        /** 
-         * @param {object} params
-         * @param {number} [params.id] Genre ID (Insert new primary genre if unset)
-         * @param {string} params.name Genre Name
-         * @returns {ApiResult} 
-         * */
-        save: (params) => this.#request("primary_genre", "save", params),
-        /**
-         * Returns an array of all genres
-         * @param {number} id Primary genre ID
-         * @returns {ApiDataResult} 
-         */
-        getSubgenres: (id) => this.#request("primary_genre", "get_subgenres", { id }),
-    }
-
     static Genres = {
         /** 
          * @param {number} id Genre ID
@@ -165,6 +140,30 @@ class API {
          * @returns {ApiDataResult} 
          * */
         getList: () => this.#request("genre", "get_list"),
+        /** 
+         * @param {number} id Genre ID
+         * @returns {ApiDataResult} 
+         * */
+        getSubgenres: (id) => this.#request("genre", "get_subgenres", { id }),
+        /** 
+         * @param {number} id Genre ID
+         * @returns {ApiDataResult} 
+         * */
+        getSubgenreTree: (id) => this.#request("genre", "get_subgenre_tree", { id }),
+        /** 
+         * @param {number} id Genre ID
+         * @returns {ApiDataResult} 
+         * */
+        getAncestors: (id) => this.#request("genre", "get_ancestors", { id }),
+        /** 
+         * @param {number} id Genre ID
+         * @returns {ApiObjectResult} 
+         * */
+        getTopLevelGenre: (id) => this.#request("genre", "get_top_level_genre", { id }),
+        /** 
+         * @returns {ApiDataResult} 
+         * */
+        getAllTopLevelGenres: () => this.#request("genre", "get_all_top_level_genres"),
         /** 
          * @param {object} params
          * @param {number} [params.id] Genre ID (Insert new genre if unset)
